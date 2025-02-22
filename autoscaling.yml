@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+  labels:
+    app: nginx-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-2
+  template:
+    metadata:
+      labels:
+        app: nginx-2
+    spec:
+      containers:
+      - name: my-app-container
+        image: registry.k8s.io/hpa-example
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "84Mi" # "1Gi" #"64Mi"
+            cpu: "200m" #"1" #"250m"
+          limits:
+            memory: "128Mi" #"2Gi" #"128Mi"
+            cpu: "500m" #"2" #"500m"
+            
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+spec:
+  selector:
+    app: nginx-2
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app-deployment
+  minReplicas: 1
+  maxReplicas: 9
+  # behavior:
+  #   scaleDown:
+  #     stabilizationWindowSeconds: 20 # 300 s to scale down
+  #   scaleUp:
+  #     stabilizationWindowSeconds: 10 #10 s required to scale up
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 50 #1Gi #500Mi of memory requested
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50 # 1 # 50% of cpu requested
+  ### we can use averageValue instead of averageUtilization
+  
+  
+  # - type: Resource
+  #   resource:
+  #     name: memory
+  #     target:
+  #       type: AverageValue
+  #       averageValue: 300Mi #1Gi #500Mi
+  # - type: Resource
+  #   resource:
+  #     name: cpu
+  #     target:
+  #       type: AverageValue
+  #       averageValue: 500m # 1 # 50% of cpu requested
+  # - type: Pods
+  #   pods:
+  #     metric:
+  #       name: packets-per-second
+  #     target:
+  #       type: AverageValue
+  #       averageValue: 1k
+  # - type: Object
+  #   object:
+  #     metric:
+  #       name: requests
+  #     target:
+  #       type: Value
+  #       value: 100
+  
