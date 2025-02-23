@@ -14,4 +14,5 @@ behavior:
   scaleUp:
     stabilizationWindowSeconds: 0
 ```
-
+Affinitty and anty 
+https://www.densify.com/kubernetes-autoscaling/kubernetes-affinity/
