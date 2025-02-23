@@ -23,7 +23,7 @@ metadata:
 spec:
   containers:
     - name: demo
-      image: alpine
+      image: nginx
       command: ["sleep", "3600"]
       env:
         # Define the environment variable
@@ -79,8 +79,8 @@ metadata:
 spec:
   containers:
     - name: app
-      command: ["/bin/sh", "-c", "printenv"]
-      image: alpine
+      # command: ["/bin/sh", "-c", "printenv"]
+      image: nginx
       envFrom:
         - configMapRef:
             name: game-demo
