@@ -16,6 +16,7 @@ behavior:
 ```
 Affinitty and anty 
 https://www.densify.com/kubernetes-autoscaling/kubernetes-affinity/
+https://behdadk.medium.com/kubernetes-taints-and-tolerations-and-node-affinity-7e4f92689ee6
 
 Taint
 https://behdadk.medium.com/kubernetes-taints-and-tolerations-and-node-affinity-7e4f92689ee6
